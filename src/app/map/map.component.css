@@ -1,11 +1,12 @@
 /* import the required JSAPI css */
 
 @import 'https://js.arcgis.com/4.6/esri/css/main.css';
-.esri-view {
-    height: 500px;
+#viewDiv {
+    position: absolute;
+    top: 4rem;
+    /* Header Height */
+    bottom: 20px;
+    /* Footer Height */
+    left: 1%;
+    width: 84%;
 }
-
-
-/* #viewDiv {
-    position: relative;
-} */
