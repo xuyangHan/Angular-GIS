@@ -57,30 +57,99 @@ export class MapComponent implements OnInit {
     });
     view.ui.add(track, "top-left");
 
-    // draw lines 
-    const graphicsLayer = new GraphicsLayer();
-    map.add(graphicsLayer);
+    let pos = [[-79.502938, 43.767854]];
+    track.on("track", function (trackEvent) {
 
-    const polyline = {
-      type: "polyline",
-      paths: [
-        [-79.502938, 43.767854], //Longitude, latitude
-        [-79.503, 43.7677], //Longitude, latitude
-        [-79.5031, 43.7676]  //Longitude, latitude
-      ]
-    };
-    const simpleLineSymbol = {
-      type: "simple-line",
-      color: "green", // Orange
-      width: 2
-    };
+      // console.log(trackEvent);
+      console.log(trackEvent.position.coords.longitude);
+      console.log(trackEvent.position.coords.latitude);
 
-    const polylineGraphic = new Graphic({
-      geometry: polyline,
-      symbol: simpleLineSymbol
-    } as any
-    );
-    graphicsLayer.add(polylineGraphic);
+      let current_location = [trackEvent.position.coords.longitude, trackEvent.position.coords.latitude];
+      pos.push(current_location);
+
+      // create a layer to draw
+      const graphicsLayer = new GraphicsLayer();
+      map.add(graphicsLayer);
+
+      // draw current point
+      const point = { //Create a point
+        type: "point",
+        longitude: trackEvent.position.coords.longitude,
+        latitude: trackEvent.position.coords.latitude
+      };
+
+      const simpleMarkerSymbol = {
+        type: "simple-marker",
+        color: "green",  // Orange
+        outline: {
+          color: [255, 255, 255], // White
+          width: 1
+        }
+      };
+
+      const pointGraphic = new Graphic({
+        geometry: point,
+        symbol: simpleMarkerSymbol
+      } as any
+      );
+      graphicsLayer.add(pointGraphic);
+
+      // draw lines 
+      const polyline = {
+        type: "polyline",
+        paths: pos
+      };
+
+      const simpleLineSymbol = {
+        type: "simple-line",
+        color: "green", // Orange
+        width: 2
+      };
+
+      const polylineGraphic = new Graphic({
+        geometry: polyline,
+        symbol: simpleLineSymbol
+      } as any
+      );
+      graphicsLayer.add(polylineGraphic);
+    })
+
+    // // draw lines 
+    // const graphicsLayer = new GraphicsLayer();
+    // map.add(graphicsLayer);
+
+    // // add a ramdom point every 5 second
+    // let pos = [[-79.502938, 43.767854], [-79.503, 43.7677]];
+
+    // let timer;
+    // timer = setInterval(function () {
+    //   let random_lat_diff = (Math.random() - 0.25) * 0.001;
+    //   let random_long_diff = (Math.random() - 0.25) * 0.001;
+    //   let current_location = [pos[pos.length-1][0] + random_lat_diff, pos[pos.length-1][1] + random_long_diff]
+    //   pos.push(current_location);
+
+    //   const polyline = {
+    //     type: "polyline",
+    //     paths: pos
+    //   };
+    //   const simpleLineSymbol = {
+    //     type: "simple-line",
+    //     color: "green", // Orange
+    //     width: 2
+    //   };
+
+    //   const polylineGraphic = new Graphic({
+    //     geometry: polyline,
+    //     symbol: simpleLineSymbol
+    //   } as any
+    //   );
+    //   graphicsLayer.add(polylineGraphic);
+
+
+    // }, 5000);
+
+
+
   }
 }
 
