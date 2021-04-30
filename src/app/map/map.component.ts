@@ -35,66 +35,52 @@ export class MapComponent implements OnInit {
     });
 
     // adds the home widget to the top left corner of the MapView
-    var homeWidget = new Home({
+    const homeWidget = new Home({
       view: view
     });
     view.ui.add(homeWidget, "top-left");
-
-    // add a locate myself widget 
-    // const locate = new Locate({
-    //   view: view,
-    //   useHeadingEnabled: false,
-    //   goToOverride: function(view, options) {
-    //     options.target.scale = 1500;
-    //     return view.goTo(options.target);
-    //   }
-    // });
-    // view.ui.add(locate, "top-left");
-
 
     const track = new Track({
       view: view,
       graphic: new Graphic({
         symbol: {
-          // type: "simple-marker",
-          // size: "12px",
+          type: "simple-marker",
+          size: "12px",
           color: "green",
-          // outline: {
-          //   color: "#efefef",
-          //   width: "1.5px"
-          // }
-        }
+          outline: {
+            color: "#efefef",
+            width: "1.5px"
+          }
+        } as any
       }),
       useHeadingEnabled: false
     });
     view.ui.add(track, "top-left");
 
-
-    // draw a point on a layer
-    const point = { //Create a point
-      type: "point",
-      longitude: -79.502938,
-      latitude: 43.767854
-    };
-
-    const simpleMarkerSymbol = {
-      geometry: point,
-      type: "simple-marker",
-      color: [226, 119, 40],  // Orange
-      outline: {
-        color: [255, 255, 255], // White
-        width: 1
-      }
-    };
-
+    // draw lines 
     const graphicsLayer = new GraphicsLayer();
     map.add(graphicsLayer);
-    const pointGraphic = new Graphic({
-      // geometry: point,
-      symbol: simpleMarkerSymbol
-    });
-    graphicsLayer.add(pointGraphic);
 
+    const polyline = {
+      type: "polyline",
+      paths: [
+        [-79.502938, 43.767854], //Longitude, latitude
+        [-79.503, 43.7677], //Longitude, latitude
+        [-79.5031, 43.7676]  //Longitude, latitude
+      ]
+    };
+    const simpleLineSymbol = {
+      type: "simple-line",
+      color: "green", // Orange
+      width: 2
+    };
+
+    const polylineGraphic = new Graphic({
+      geometry: polyline,
+      symbol: simpleLineSymbol
+    } as any
+    );
+    graphicsLayer.add(polylineGraphic);
   }
 }
 
