@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 
 import EsriMap from "@arcgis/core/Map";
 import MapView from "@arcgis/core/views/MapView";
@@ -13,17 +13,71 @@ import Track from "@arcgis/core/widgets/Track";
   styleUrls: ['./map.component.css']
 })
 
-export class MapComponent implements OnInit {
+export class MapComponent {
   map: EsriMap;
   view: MapView;
+  totalDistance: number;
 
-  constructor() { }
+  @Output() totalDistanceChanged: EventEmitter<number> =   new EventEmitter();
+
+  constructor() {
+
+  }
 
   ngOnInit() {
+    // Function to calculate distance 
+    function distanceInKmBetweenEarthCoordinates(lat1: number, lon1: number, lat2: number, lon2: number) {
+      var p = 0.017453292519943295;    // Math.PI / 180
+      var c = Math.cos;
+      var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) *
+        (1 - c((lon2 - lon1) * p)) / 2;
+      return 12742 * Math.asin(Math.sqrt(a)) * 1000;
+    };
+
+    // draw Points and Line
+    function drawPointdrawLine(line: any[], point: object, graphicsLayer: GraphicsLayer) {
+      // draw point
+      const simpleMarkerSymbol = {
+        type: "simple-marker",
+        color: "green",  // Orange
+        size: 8,
+        outline: {
+          color: [255, 255, 255], // White
+          width: 0.5
+        }
+      };
+
+      const pointGraphic = new Graphic({
+        geometry: point,
+        symbol: simpleMarkerSymbol
+      } as any
+      );
+      graphicsLayer.add(pointGraphic);
+
+      // draw lines 
+      const polyline = {
+        type: "polyline",
+        paths: line
+      };
+
+      const simpleLineSymbol = {
+        type: "simple-line",
+        color: "green", // Orange
+        width: 2
+      };
+
+      const polylineGraphic = new Graphic({
+        geometry: polyline,
+        symbol: simpleLineSymbol
+      } as any
+      );
+      graphicsLayer.add(polylineGraphic);
+    }
 
     // Add Based Map
     const map = new EsriMap({
-      basemap: "streets-vector"
+      basemap: "streets-navigation-vector"
     });
 
     // add initial view, position, and zoom
@@ -58,47 +112,10 @@ export class MapComponent implements OnInit {
     view.ui.add(track, "top-left");
 
     let pos = [[-79.502938, 43.767854]];
-    // let pos = [];
-
-    function drawPointdrawLine(line: any[], point: object, graphicsLayer: GraphicsLayer) {
-
-      const simpleMarkerSymbol = {
-        type: "simple-marker",
-        color: "green",  // Orange
-        outline: {
-          color: [255, 255, 255], // White
-          width: 0.8
-        }
-      };
-
-      const pointGraphic = new Graphic({
-        geometry: point,
-        symbol: simpleMarkerSymbol
-      } as any
-      );
-      graphicsLayer.add(pointGraphic);
-
-      // draw lines 
-      const polyline = {
-        type: "polyline",
-        paths: line
-      };
-
-      const simpleLineSymbol = {
-        type: "simple-line",
-        color: "green", // Orange
-        width: 2
-      };
-
-      const polylineGraphic = new Graphic({
-        geometry: polyline,
-        symbol: simpleLineSymbol
-      } as any
-      );
-      graphicsLayer.add(polylineGraphic);
-    }
+    // let pos = [];    
 
     // draw trajectory in track mode
+    var totalDistance = 0;
     track.on("track", function (trackEvent) {
 
       // console.log(trackEvent);
@@ -120,7 +137,11 @@ export class MapComponent implements OnInit {
       map.add(graphicsLayer);
 
       drawPointdrawLine(pos, point, graphicsLayer);
+
+      totalDistance += distanceInKmBetweenEarthCoordinates(pos[pos.length - 2][0], pos[pos.length - 2][1], current_location[0], current_location[1]);
+      MapComponent.prototype.totalDistance = Math.round(totalDistance);
     })
+
 
     // use fake location, every 5 seconds
     // create a layer to draw
@@ -130,7 +151,7 @@ export class MapComponent implements OnInit {
     let timer;
     timer = setInterval(function () {
       let random_lat_diff = (Math.random() - 0.25) * 0.001;
-      let random_long_diff = (Math.random() - 0.25) * 0.001;
+      let random_long_diff = (Math.random() - 0.25) * 0.001;      
       let current_location = [pos[pos.length - 1][0] + random_lat_diff, pos[pos.length - 1][1] + random_long_diff]
       pos.push(current_location);
 
@@ -142,9 +163,10 @@ export class MapComponent implements OnInit {
       };
 
       drawPointdrawLine(pos, point, graphicsLayer);
-
+      totalDistance += distanceInKmBetweenEarthCoordinates(pos[pos.length - 2][0],pos[pos.length - 2][1], current_location[0], current_location[1]);      
+      MapComponent.prototype.totalDistance = Math.round(totalDistance);
     }, 5000);    
-  }   
+  }
 }
 
 
