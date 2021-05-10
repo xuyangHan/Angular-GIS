@@ -58,33 +58,16 @@ export class MapComponent implements OnInit {
     view.ui.add(track, "top-left");
 
     let pos = [[-79.502938, 43.767854]];
-    // draw trajectory in track mode
-    track.on("track", function (trackEvent) {
+    // let pos = [];
 
-      // console.log(trackEvent);
-      console.log(trackEvent.position.coords.longitude);
-      console.log(trackEvent.position.coords.latitude);
-
-      let current_location = [trackEvent.position.coords.longitude, trackEvent.position.coords.latitude];
-      pos.push(current_location);
-
-      // create a layer to draw
-      const graphicsLayer = new GraphicsLayer();
-      map.add(graphicsLayer);
-
-      // draw current point
-      const point = { //Create a point
-        type: "point",
-        longitude: trackEvent.position.coords.longitude,
-        latitude: trackEvent.position.coords.latitude
-      };
+    function drawPointdrawLine(line: any[], point: object, graphicsLayer: GraphicsLayer) {
 
       const simpleMarkerSymbol = {
         type: "simple-marker",
         color: "green",  // Orange
         outline: {
           color: [255, 255, 255], // White
-          width: 1
+          width: 0.8
         }
       };
 
@@ -98,7 +81,7 @@ export class MapComponent implements OnInit {
       // draw lines 
       const polyline = {
         type: "polyline",
-        paths: pos
+        paths: line
       };
 
       const simpleLineSymbol = {
@@ -113,65 +96,55 @@ export class MapComponent implements OnInit {
       } as any
       );
       graphicsLayer.add(polylineGraphic);
+    }
+
+    // draw trajectory in track mode
+    track.on("track", function (trackEvent) {
+
+      // console.log(trackEvent);
+      console.log(trackEvent.position.coords.longitude);
+      console.log(trackEvent.position.coords.latitude);
+
+      let current_location = [trackEvent.position.coords.longitude, trackEvent.position.coords.latitude];
+      pos.push(current_location);
+
+      // draw current point
+      const point = { //Create a point
+        type: "point",
+        longitude: trackEvent.position.coords.longitude,
+        latitude: trackEvent.position.coords.latitude
+      };
+
+      // create a layer to draw
+      const graphicsLayer = new GraphicsLayer();
+      map.add(graphicsLayer);
+
+      drawPointdrawLine(pos, point, graphicsLayer);
     })
 
-    // // use fake location, every 5 seconds
-    // // create a layer to draw
-    // const graphicsLayer = new GraphicsLayer();
-    // map.add(graphicsLayer);
+    // use fake location, every 5 seconds
+    // create a layer to draw
+    const graphicsLayer = new GraphicsLayer();
+    map.add(graphicsLayer);
 
-    // let timer;
-    // timer = setInterval(function () {
-    //   let random_lat_diff = (Math.random() - 0.25) * 0.001;
-    //   let random_long_diff = (Math.random() - 0.25) * 0.001;
-    //   let current_location = [pos[pos.length-1][0] + random_lat_diff, pos[pos.length-1][1] + random_long_diff]
-    //   pos.push(current_location);
-      
-    //   // draw lines 
-    //   const polyline = {
-    //     type: "polyline",
-    //     paths: pos
-    //   };
-    //   const simpleLineSymbol = {
-    //     type: "simple-line",
-    //     color: "green", // Orange
-    //     width: 3
-    //   };
+    let timer;
+    timer = setInterval(function () {
+      let random_lat_diff = (Math.random() - 0.25) * 0.001;
+      let random_long_diff = (Math.random() - 0.25) * 0.001;
+      let current_location = [pos[pos.length - 1][0] + random_lat_diff, pos[pos.length - 1][1] + random_long_diff]
+      pos.push(current_location);
 
-    //   const polylineGraphic = new Graphic({
-    //     geometry: polyline,
-    //     symbol: simpleLineSymbol
-    //   } as any
-    //   );
-    //   graphicsLayer.add(polylineGraphic);
+      // draw current point
+      const point = { //Create a point
+        type: "point",
+        longitude: current_location[0],
+        latitude: current_location[1]
+      };
 
-    //   // draw current point
-    //   const point = { //Create a point
-    //     type: "point",
-    //     longitude: current_location[0],
-    //     latitude: current_location[1]
-    //   };
+      drawPointdrawLine(pos, point, graphicsLayer);
 
-    //   const simpleMarkerSymbol = {
-    //     type: "simple-marker",
-    //     color: "green",  // Orange
-    //     outline: {
-    //       color: [255, 255, 255], // White
-    //       width: 1.5
-    //     }
-    //   };
-
-    //   const pointGraphic = new Graphic({
-    //     geometry: point,
-    //     symbol: simpleMarkerSymbol
-    //   } as any
-    //   );
-    //   graphicsLayer.add(pointGraphic);
-
-
-    // }, 5000);
-
-  }
+    }, 5000);    
+  }   
 }
 
 

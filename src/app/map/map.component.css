@@ -5,8 +5,36 @@
     position: absolute;
     top: 4rem;
     /* Header Height */
-    bottom: 20px;
+    bottom: 45%;
     /* Footer Height */
     left: 1%;
-    width: 84%;
+    width: 98%;
+}
+
+#side-bar {
+    position: absolute;
+    /* Header Height */
+    bottom: 20px;
+    /* Footer Height */
+    right: 1%;
+    width: 98%;
+    height: 40%;
+    min-height: 200px;
+    background: brown;
+}
+
+.col {
+    padding-top: 2rem;
+}
+
+.display-box {
+    background-color: blueviolet;
+    height: 40%;
+    min-height: 100px;
+}
+
+#display-box-3 {
+    background-color: aqua;
+    height: 40%;
+    min-height: 100px;
 }
