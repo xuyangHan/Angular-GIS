@@ -17,8 +17,8 @@ export class MapComponent {
   map: EsriMap;
   view: MapView;
   totalDistance: number;
-
-  @Output() totalDistanceChanged: EventEmitter<number> =   new EventEmitter();
+  totalCal: number;
+  Speed: number[];
 
   constructor() {
 
@@ -115,7 +115,8 @@ export class MapComponent {
     // let pos = [];    
 
     // draw trajectory in track mode
-    var totalDistance = 0;
+    let totalDistance = 0;
+    let totalCal = 0;
     track.on("track", function (trackEvent) {
 
       // console.log(trackEvent);
@@ -149,6 +150,10 @@ export class MapComponent {
     map.add(graphicsLayer);
 
     let timer;
+    // this.Speed = [0];
+    // this.totalCal = 0;
+    // this.totalDistance = 0;
+    let speed_list = [];
     timer = setInterval(function () {
       let random_lat_diff = (Math.random() - 0.25) * 0.001;
       let random_long_diff = (Math.random() - 0.25) * 0.001;      
@@ -163,9 +168,20 @@ export class MapComponent {
       };
 
       drawPointdrawLine(pos, point, graphicsLayer);
-      totalDistance += distanceInKmBetweenEarthCoordinates(pos[pos.length - 2][0],pos[pos.length - 2][1], current_location[0], current_location[1]);      
+      let newDist = distanceInKmBetweenEarthCoordinates(pos[pos.length - 2][0],pos[pos.length - 2][1], current_location[0], current_location[1]); 
+      totalDistance += newDist;
       MapComponent.prototype.totalDistance = Math.round(totalDistance);
-    }, 5000);    
+
+      let currSpeed =  Math.round(newDist/5*3600/1000);      
+      speed_list.push(currSpeed);
+      MapComponent.prototype.Speed = speed_list;
+
+      let METs = 1.02532235513438 * currSpeed - 0.100512661177567;
+      let BMR = 1794;
+      totalCal += METs * 5/3600 * BMR/24;
+      MapComponent.prototype.totalCal = Math.round(totalCal);
+    }, 5000);      
+    
   }
 }
 
