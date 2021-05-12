@@ -4,17 +4,24 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <div id="display-box-1" class="display-box">Your Total Running Distance: {{ totalDistance }} m. </div>
+                    <div id="display-box-1" class="display-box">
+                        <p>Total Running Distance: </p>
+                        <p class="font-weight-bold text-center">{{ totalDistance }} m.</p>
+                    </div>
                 </div>
                 <div class="col">
-                    <div id="display-box-2" class="display-box">Your Burned Calories: {{ totalCal }} kCal. </div>
+                    <div id="display-box-2" class="display-box">
+                        <p>Burned Calories:</p>
+                        <p class="font-weight-bold text-center">{{ totalCal }} kCal.</p>
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <div id="display-box-3">
-                        <p>Your Current Running Speed: {{ Speed[Speed.length-1] }} km/h. </p>
-                        <canvas id="myChart" width="450" height="50"></canvas>
+                        <p>Current Running Speed: </p>
+                        <p class="font-weight-bold text-center">{{ Speed[Speed.length-1] }} km/h. </p>
+                        <!-- <canvas id="myChart" width="450" height="50"></canvas> -->
                     </div>
                 </div>
             </div>
