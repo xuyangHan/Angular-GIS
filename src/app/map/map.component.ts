@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+// import { Chart } from 'chart.js';
 
 import EsriMap from "@arcgis/core/Map";
 import MapView from "@arcgis/core/views/MapView";
@@ -148,15 +149,32 @@ export class MapComponent {
     // create a layer to draw
     const graphicsLayer = new GraphicsLayer();
     map.add(graphicsLayer);
+    
+    let speed_list = [0];
+    let labels = ['1'];
+    // let canvas = <HTMLCanvasElement>document.getElementById('myChart');
+    // let ctx = canvas.getContext('2d');
+
+    // this.Speed = speed_list;
+    // var data = {
+    //   labels: labels,
+    //   datasets: [{
+    //     label: 'My First Dataset',
+    //     data: speed_list,
+    //     fill: false,
+    //     borderColor: 'rgb(75, 192, 192)',
+    //     tension: 0.1
+    //   }]
+    // };
+    // var myChart = new Chart(ctx, {
+    //   type: 'line',
+    //   data: data,      
+    // });
 
     let timer;
-    // this.Speed = [0];
-    // this.totalCal = 0;
-    // this.totalDistance = 0;
-    let speed_list = [];
     timer = setInterval(function () {
       let random_lat_diff = (Math.random() - 0.25) * 0.001;
-      let random_long_diff = (Math.random() - 0.25) * 0.001;      
+      let random_long_diff = (Math.random() - 0.25) * 0.001;
       let current_location = [pos[pos.length - 1][0] + random_lat_diff, pos[pos.length - 1][1] + random_long_diff]
       pos.push(current_location);
 
@@ -168,20 +186,47 @@ export class MapComponent {
       };
 
       drawPointdrawLine(pos, point, graphicsLayer);
-      let newDist = distanceInKmBetweenEarthCoordinates(pos[pos.length - 2][0],pos[pos.length - 2][1], current_location[0], current_location[1]); 
+      let newDist = distanceInKmBetweenEarthCoordinates(pos[pos.length - 2][0], pos[pos.length - 2][1], current_location[0], current_location[1]);
       totalDistance += newDist;
       MapComponent.prototype.totalDistance = Math.round(totalDistance);
 
-      let currSpeed =  Math.round(newDist/5*3600/1000);      
+      let currSpeed = Math.round(newDist / 5 * 3600 / 1000);
       speed_list.push(currSpeed);
       MapComponent.prototype.Speed = speed_list;
 
       let METs = 1.02532235513438 * currSpeed - 0.100512661177567;
       let BMR = 1794;
-      totalCal += METs * 5/3600 * BMR/24;
+      totalCal += METs * 5 / 3600 * BMR / 24;
       MapComponent.prototype.totalCal = Math.round(totalCal);
-    }, 5000);      
-    
+
+      let dateTime = new Date()
+      let currtTime = dateTime.getHours() + '-' + dateTime.getMinutes() + '-' + dateTime.getSeconds();
+      labels.push(currtTime);
+
+      // var data = {
+      //   labels: labels,
+      //   datasets: [{
+      //     label: 'My First Dataset',
+      //     data: speed_list,
+      //     fill: false,
+      //     borderColor: 'rgb(75, 192, 192)',
+      //     tension: 0.1
+      //   }]
+      // };
+      // var myChart = new Chart(ctx, {
+      //   type: 'line',
+      //   data: data,
+      //   options: {
+      //     scales: {
+      //       y: {
+      //         beginAtZero: true
+      //       }
+      //     }
+      //   }
+      // });
+
+    }, 5000);
+
   }
 }
 

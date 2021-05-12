@@ -12,7 +12,10 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div id="display-box-3">Your Current Running Speed: {{ Speed[Speed.length-1] }} km/h. </div>
+                    <div id="display-box-3">
+                        <p>Your Current Running Speed: {{ Speed[Speed.length-1] }} km/h. </p>
+                        <canvas id="myChart" width="450" height="50"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
